@@ -10,7 +10,6 @@ import io
 import base64
 import aiendpoint
 import localmodel
-#API KEY = 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
 import time
 pyautogui.FAILSAFE = True
 global AutoOut 
