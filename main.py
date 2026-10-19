@@ -11,6 +11,8 @@ import base64
 import aiendpoint
 import localmodel
 import time
+import json
+
 pyautogui.FAILSAFE = True
 global AutoOut 
 AutoOut = False
@@ -22,14 +24,12 @@ global Vals
 Vals = {}
 
 #First Time Setup 
-try:
-    with open("C:\\ProgramData\\JarVis.txt","x",encoding="utf+8") as data:
-        pass
-except FileExistsError as e:
-    has_vals = True
-    with open("C:\\ProgramData\\JarVis.txt","r",encoding="utf+8") as data:
-            print(data.read())
-
+try :
+    with open("C:\\ProgramData\\JarVis.json","r",encoding="utf-8")as file:
+        Vals = json.load(file)
+        print(Vals)
+except Exception as e:
+    print("Error in loading file :",e)
 
 #==========================================================================================================================
 #autoclose functions
@@ -64,6 +64,16 @@ def flash():
 #Main function to send the Prompt
 def enter(text):
     global previousmsg
+    visualiser = CTk()
+    visualiser.geometry("500x80")
+    Info = CTkLabel(visualiser,text="Information Panel : Whatever Ai wants to tell you will be written here",width=500,height=80)
+    Info.grid()
+    visualiser.attributes("-topmost",True)
+    try:
+        Info.configure(text=previousmsg[-1].split("#*&")[1])
+    except Exception as e:
+        pass
+    
     ss = pyautogui.screenshot()
     bufferedimg = io.BytesIO()
     ss.save(bufferedimg, format="PNG")
@@ -93,27 +103,28 @@ def enter(text):
         "Click the CENTER of the target, not its edge. "
         "Do not resize or scale coordinates. "
         "Carefully estimate the center of the target using its visible boundaries. "
+        "IF YOU WANT TO INFORM THE USER OF SOMETHING , at the end of the PROMPT add #*& followed by your message"
         "CRITICAL: Look at the screenshot. If the task described in the instructions is done or the previous message(s) have already executed your task move on to the next one "
         +pmsgstr
     )
-
-    msg = aiendpoint.req(full_prompt,mime_type,b64img)
+    msg = aiendpoint.req(full_prompt,mime_type,b64img,Vals["Endpoint"],Vals["Auth"],Vals["Model"])
     print(msg)
     previousmsg.append(msg)
-    
+    visualiser.withdraw()
     if msg == "{DONE}":
         sys.exit()
     elif "CTE" in msg:
         flash()
-        X = int(msg.split("|")[0].split("(")[1].split(")")[0].split[0])
-        Y = int(msg.split("|")[0].split("(")[1].split(")")[0].split[1])
+        X = int(msg.split("|")[0].split("(")[1].split(")")[0].split(',')[0])
+        Y = int(msg.split("|")[0].split("(")[1].split(")")[0].split(',')[1])
         text = msg.split("|")[1].split("\"")[1]
         pyautogui.click(X,Y)
         keyboard.write(text)
         pyautogui.press("enter")
+        enter(text)
     elif msg == "{BROWSER}":
         flash()
-        subprocess.Popen(r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe")
+        subprocess.Popen(Vals["Browser"])
         time.sleep(2)
         enter(text)
     elif "CLICK" in msg :
@@ -153,48 +164,57 @@ def setup():
     global Vals
     Vals = {}
     default_browser = ''
+    global page
+    page = 0
     #Default Browser
-    def dbset():
+    def pick_browser():
         default_browser = filedialog.askopenfilename(
                     title="SELECT YOUR DEFAULT BROWSER",
                     initialdir="%USERPROFILE%",
                     filetypes=[("Windows Executables (Your Browser)","*.exe")]
                 )
-        btn1.configure(text="Current Browser :"+default_browser)
-        Vals["Browser"] = default_browser
-
+        Value.insert(0,default_browser)
     def nxt():
-        global Vals
-        DB.withdraw()
-        
-        AApi = CTkToplevel()
-        def Api():
-            global Vals
-            Vals["Endpoint"] = E1
-            Vals["Auth"] = E2
-            Vals["Model"] = E3
-            AApi.withdraw()
+        global page
+        if page == 0:
+            Vals["Browser"] = Value.get()
+            page = 1
+            file_pick.destroy()
+            lbl.configure(text="Enter Your API Endpoint")
+            Value.delete(0,"end")
+            Value.configure(placeholder_text="Enter your api endpoint ....")
+        elif page == 1:
+            Vals["Endpoint"] = Value.get()
+            page = 2
+            lbl.configure(text="Enter Your Api Auth Token") 
+            Value.delete(0,"end")
+            Value.configure(placeholder_text="Enter API KEY , usually a long string ....")
+        elif page == 2:
+            Vals["Auth"] = Value.get()
+            lbl.configure(text="Enter Your Model :")
+            Value.delete(0,"end")
+            Value.configure(placeholder_text="Enter model , better model is usually more expensive")
+            page = 3
+            next_button.configure(text="Submit")
+        elif page == 3:
+            Vals["Model"] = Value.get()
+            setup_wizard.withdraw()
             global AutoOut
             AutoOut = True
-
-        E1 = CTkEntry(AApi,placeholder_text="Enter Your Api Endopint :")
-        E1.grid()
-        E2 = CTkEntry(AApi,placeholder_text="Enter Your Api Key : ")
-        E2.grid()
-        E3 = CTkEntry(AApi,placeholder_text="Enter Your Ai Model :  ")
-        E3.grid()
-        CTkButton(AApi,text="Next",command=Api).grid()
-        AApi.mainloop() 
-
-        with open("C:\\ProgramData\\JarVis.txt","w") as file :
-            file.write(str(Vals))
-
-    DB = CTkToplevel()
-    btn1 = CTkButton(DB,text="Current Browser : None",command=dbset)
-    btn1.grid()
-    CTkButton(DB , text="Next",command=nxt).grid(row=1)
-    DB.mainloop()
-
+            with open("C:\\ProgramData\\JarVis.json","w") as file:
+                json.dump(Vals,file,indent=4)
+    
+    setup_wizard = CTk()
+    setup_wizard.title("SETUP WIZARD")
+    lbl = CTkLabel(setup_wizard,text="ENTER DEFAULT BROWSER : ")
+    lbl.grid(row=0,column=0)
+    Value = CTkEntry(setup_wizard,placeholder_text="ENTER PATH TO DEFAULT BROWSER OR Pick A FILE ....",width=300)
+    Value.grid(row=1,column=0)
+    file_pick =CTkButton(setup_wizard,text="...",command=lambda : pick_browser())
+    file_pick.grid(row=1,column=1)
+    next_button =CTkButton(setup_wizard,text="NEXT",command=nxt)
+    next_button.grid(row=2,column=1)
+    setup_wizard.mainloop()
 
 
 
@@ -224,6 +244,5 @@ CTkButton(root,width=480, text="SETUP WIZARD",fg_color="#2c2e35",command=setup).
 #AutoClose Code
 root.bind("<FocusOut>", lambda event : autoclose(""))
 root.after(10,lambda : autoout())
-if not has_vals:
-    root.after(50,lambda event : setup())
+
 root.mainloop()
