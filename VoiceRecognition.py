@@ -13,11 +13,10 @@ import sounddevice
 import scipy.io.wavfile
 from tkinter import messagebox
 
-def recognise():
+def recognise(DURATION):
     #tiny --> base -->small --> medium --> Large-v3
     model_size = "medium"
     SAMPLE_RATE = 44100
-    DURATION = 5
     filename = "Output.wav"
     messagebox.showinfo("STT INFO","Recording Started , Speak for the next 10 Seconds")
     recording = sounddevice.rec(int(DURATION*SAMPLE_RATE),samplerate=SAMPLE_RATE,channels=1)

@@ -195,9 +195,22 @@ def setup():
             Value.delete(0,"end")
             Value.configure(placeholder_text="Enter model , better model is usually more expensive")
             page = 3
-            next_button.configure(text="Submit")
         elif page == 3:
             Vals["Model"] = Value.get()
+            lbl.configure(text="Enter Voice Recognition Time :")
+            Value.delete(0,"end")
+            Value.configure(placeholder_text="In seconds ... (default 10)")
+            page = 4
+
+        elif page == 4:
+            Vals["VRT"] = Value.get()
+            lbl.configure(text="Enter Voice Recognition Model Size :")
+            Value.destroy()
+            dropdown.grid(row=1,column=0)
+            next_button.configure(text="Submit")
+            page = 5
+        elif page == 5:
+            Vals["Voice_Model"] = dropdown.get()
             setup_wizard.withdraw()
             global AutoOut
             AutoOut = True
@@ -214,12 +227,13 @@ def setup():
     file_pick.grid(row=1,column=1)
     next_button =CTkButton(setup_wizard,text="NEXT",command=nxt)
     next_button.grid(row=2,column=1)
+    dropdown = CTkComboBox(setup_wizard,values=["tiny","base","small","medium","Large-v3"])
     setup_wizard.mainloop()
 
 def voice_recog():
     global AutoOut
     AutoOut = False
-    Mainbox.insert(0,VoiceRecognition.recognise())
+    Mainbox.insert(0,VoiceRecognition.recognise(int(Vals["VRT"]) if Vals["VRT"] != None else 10  , Vals["Voice_Model"] if Vals["Voice_Model"] != None else "base"))
     root.after(250,autoout)
     
 

@@ -38,3 +38,13 @@ Open Router --> Many free Models , sometimes unreliable
 Click Voice and OK to the message box . it will record your speech for the next 10 seconds .
 After 10 seconds click OK to the next message box and it will automatically add the text to the input prompt
 
+
+# Backround Service
+
+The backround Service.py helps you to easily launch Jarvis anytime , just click win+enter while it's runnign
+
+## NOTE
+Backround service.py is exteremely buggy and may not work properly on certain machines , if you are having issues run main.py
+
+# CUSTOM BINARY
+A custom Binary is made out of main.py , just run it and jarvis opens
