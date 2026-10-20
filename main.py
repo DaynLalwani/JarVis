@@ -1,7 +1,7 @@
 
 from customtkinter import *
 import sys
-from tkinter import PhotoImage , filedialog
+from tkinter import PhotoImage , filedialog , messagebox
 from groq import Groq
 import subprocess
 import keyboard
@@ -12,7 +12,7 @@ import aiendpoint
 import localmodel
 import time
 import json
-
+import VoiceRecognition
 pyautogui.FAILSAFE = True
 global AutoOut 
 AutoOut = False
@@ -153,9 +153,9 @@ def enter(text):
 
 def textchange(text):
     if text == "":
-        root.geometry(f"500x160+{int((root.winfo_screenwidth() - 500) / 2)}+{int((root.winfo_screenheight() - 80) / 2)}")
+        root.geometry(f"550x160+{int((root.winfo_screenwidth() - 500) / 2)}+{int((root.winfo_screenheight() - 80) / 2)}")
     else:
-        root.geometry(f"500x80+{int((root.winfo_screenwidth() - 500) / 2)}+{int((root.winfo_screenheight() - 80) / 2)}")
+        root.geometry(f"550x80+{int((root.winfo_screenwidth() - 500) / 2)}+{int((root.winfo_screenheight() - 80) / 2)}")
 
 
 def setup():
@@ -216,8 +216,12 @@ def setup():
     next_button.grid(row=2,column=1)
     setup_wizard.mainloop()
 
-
-
+def voice_recog():
+    global AutoOut
+    AutoOut = False
+    Mainbox.insert(0,VoiceRecognition.recognise())
+    root.after(250,autoout)
+    
 
 #=========================================================================================================================
 keyboard.add_hotkey('esc', estop)
@@ -227,7 +231,7 @@ root = CTk()
 
 root.title("")
 root.overrideredirect(True) 
-root.geometry(f"500x160+{int((root.winfo_screenwidth() - 500) / 2)}+{int((root.winfo_screenheight() - 80) / 2)}")
+root.geometry(f"550x160+{int((root.winfo_screenwidth() - 500) / 2)}+{int((root.winfo_screenheight() - 80) / 2)}")
 root.attributes('-alpha',0.9)
 set_appearance_mode("Dark")
 
@@ -236,7 +240,8 @@ Mainbox = CTkEntry(root,placeholder_text="Enter instructions to the AI model ...
 Mainbox.grid(row=0,column =0)
 Mainbox.bind("<Return>",lambda event :enter(Mainbox.get()))
 Mainbox.bind("<KeyRelease>", lambda event:textchange(Mainbox.get()))
-
+VRB = CTkButton(root,text="Voice",command=voice_recog,width=50)
+VRB.grid(row=0,column=1)
 #Setup Box
 
 CTkButton(root,width=480, text="SETUP WIZARD",fg_color="#2c2e35",command=setup).grid(row=2,column=0)
