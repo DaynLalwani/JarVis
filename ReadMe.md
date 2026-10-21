@@ -53,5 +53,18 @@ A custom Binary is made out of main.py , just run it and jarvis opens
 
 # Video Tutorial On Setup
 
-https://github.com/DaynLalwani/JarVis/raw/refs/heads/main/Setup%20Wizard.mp4
+
+
+https://github.com/user-attachments/assets/23d2bcce-c27b-4317-985e-e0b24214a9d8
+
+
+
+
+# Usage Tutorial
+
+
+
+https://github.com/user-attachments/assets/348b4ace-49a8-4a6f-93d5-89c3860482db
+
+
 
