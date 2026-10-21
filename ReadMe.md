@@ -53,6 +53,5 @@ A custom Binary is made out of main.py , just run it and jarvis opens
 
 # Video Tutorial On Setup
 
-<video width="320" height="240" controls>
-  <source src="https://github.com/DaynLalwani/JarVis/raw/refs/heads/main/Setup%20Wizard.mp4" type="video/mp4">
-</video>
+https://github.com/DaynLalwani/JarVis/raw/refs/heads/main/Setup%20Wizard.mp4
+
