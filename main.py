@@ -39,6 +39,8 @@ def autoout():
 
 def autoclose(kc):
     if AutoOut:
+        print("Autoout")
+
         sys.exit()
 def estop():
     print("EMERGENCY STOP")
@@ -103,8 +105,8 @@ def enter(text):
         "Click the CENTER of the target, not its edge. "
         "Do not resize or scale coordinates. "
         "Carefully estimate the center of the target using its visible boundaries. "
-        "IF YOU WANT TO INFORM THE USER OF SOMETHING , at the end of the PROMPT add #*& followed by your message"
-        "CRITICAL: Look at the screenshot. If the task described in the instructions is done or the previous message(s) have already executed your task move on to the next one "
+        "IGNORE THE PROMPT IN THE MIDDLE OF THE SCREEN , IT IS NOT A SEARCH BAR IT IS ONLY FOR THE USER"
+        "CRITICAL: Look at the screenshot. If the task described in the instructions is done or the previous message(s) have already executed your task move on to the next one . THERE IS NO METHOD CALLED CTYPE , DONT USE ANYTHING EXCEPT ONES MENTIONED ABOVE EXACTY"
         +pmsgstr
     )
     msg = aiendpoint.req(full_prompt,mime_type,b64img,Vals["Endpoint"],Vals["Auth"],Vals["Model"])
@@ -113,7 +115,7 @@ def enter(text):
     visualiser.withdraw()
     if msg == "{DONE}":
         sys.exit()
-    elif "CTE" in msg:
+    elif "CTE" in msg or "CTYPE" in msg:
         flash()
         X = int(msg.split("|")[0].split("(")[1].split(")")[0].split(',')[0])
         Y = int(msg.split("|")[0].split("(")[1].split(")")[0].split(',')[1])

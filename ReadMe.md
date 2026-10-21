@@ -48,3 +48,6 @@ Backround service.py is exteremely buggy and may not work properly on certain ma
 
 # CUSTOM BINARY
 A custom Binary is made out of main.py , just run it and jarvis opens
+
+# Video Tutorial On Setup
+
