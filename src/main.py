@@ -79,7 +79,6 @@ def enter(text):
     ss = pyautogui.screenshot()
     bufferedimg = io.BytesIO()
     ss.save(bufferedimg, format="PNG")
-    ss.save("SS.png",format="PNG")
     b64img = base64.b64encode(bufferedimg.getvalue()).decode('utf-8')
     print("Screen size:", pyautogui.size())
     screen_width, screen_height = pyautogui.size()
@@ -178,6 +177,7 @@ def setup():
         Value.insert(0,default_browser)
     def nxt():
         global page
+        back_button.configure(state="normal")
         if page == 0:
             Vals["Browser"] = Value.get()
             page = 1
@@ -208,7 +208,7 @@ def setup():
             Vals["VRT"] = Value.get()
             lbl.configure(text="Enter Voice Recognition Model Size :")
             Value.destroy()
-            dropdown.grid(row=1,column=0)
+            dropdown.grid(row=2,column=0,sticky="ew",padx=30)
             next_button.configure(text="Submit")
             page = 5
         elif page == 5:
@@ -218,18 +218,59 @@ def setup():
             AutoOut = True
             with open("C:\\ProgramData\\JarVis.json","w") as file:
                 json.dump(Vals,file,indent=4)
+
+    def back():
+        global page
+        nonlocal Value, file_pick
+        steps = {
+            0: ("ENTER DEFAULT BROWSER : ", "ENTER PATH TO DEFAULT BROWSER OR Pick A FILE ....", "Browser"),
+            1: ("Enter Your API Endpoint", "Enter your api endpoint ....", "Endpoint"),
+            2: ("Enter Your Api Auth Token", "Enter API KEY , usually a long string ....", "Auth"),
+            3: ("Enter Your Model :", "Enter model , better model is usually more expensive", "Model"),
+            4: ("Enter Voice Recognition Time :", "In seconds ... (default 10)", "VRT"),
+        }
+        if page == 0:
+            return
+        page -= 1
+        if page == 4:
+            dropdown.grid_forget()
+            Value = CTkEntry(setup_wizard,width=300,height=35)
+            Value.grid(row=2,column=0,sticky="ew",padx=30)
+            next_button.configure(text="NEXT")
+        elif page == 0:
+            file_pick = CTkButton(setup_wizard,text="...",width=40,height=35,command=lambda : pick_browser())
+            file_pick.grid(row=2,column=1,padx=(0,30))
+            back_button.configure(state="disabled")
+        text, placeholder, key = steps[page]
+        lbl.configure(text=text)
+        Value.delete(0,"end")
+        Value.configure(placeholder_text=placeholder)
+        Value.insert(0,Vals.get(key,""))
     
-    setup_wizard = CTk()
+    setup_wizard = CTkToplevel(root)
     setup_wizard.title("SETUP WIZARD")
+    setup_wizard.geometry("600x350")
+    setup_wizard.columnconfigure(0, weight=1)
+    setup_wizard.rowconfigure(1, weight=1)
+    setup_wizard.rowconfigure(3, weight=1)
+
+    Topframe = CTkFrame(setup_wizard)
+    Topframe.grid(row = 0,column = 0,columnspan=2,sticky="ew",padx=10,pady=10)
+    Topframe.columnconfigure(0, weight=1)
+
+    CTkLabel(Topframe,text="SETUP WIZARD").grid(row=0,column=0,pady=10)
+    back_button = CTkButton(Topframe,text="BACK",width=70,height=28,state="disabled",command=back)
+    back_button.place(relx=1.0,rely=0.5,x=-10,anchor="e")
+    
     lbl = CTkLabel(setup_wizard,text="ENTER DEFAULT BROWSER : ")
-    lbl.grid(row=0,column=0)
-    Value = CTkEntry(setup_wizard,placeholder_text="ENTER PATH TO DEFAULT BROWSER OR Pick A FILE ....",width=300)
-    Value.grid(row=1,column=0)
-    file_pick =CTkButton(setup_wizard,text="...",command=lambda : pick_browser())
-    file_pick.grid(row=1,column=1)
+    lbl.grid(row=1,column=0,columnspan=2,sticky="sw",padx=30,pady=(0,5))
+    Value = CTkEntry(setup_wizard,placeholder_text="ENTER PATH TO DEFAULT BROWSER OR Pick A FILE ....",width=300,height=35)
+    Value.grid(row=2,column=0,sticky="ew",padx=30)
+    file_pick =CTkButton(setup_wizard,text="...",width=40,height=35,command=lambda : pick_browser())
+    file_pick.grid(row=2,column=1,padx=(0,30))
     next_button =CTkButton(setup_wizard,text="NEXT",command=nxt)
-    next_button.grid(row=2,column=1)
-    dropdown = CTkComboBox(setup_wizard,values=["tiny","base","small","medium","Large-v3"])
+    next_button.grid(row=3,column=0,columnspan=2,sticky="se",padx=30,pady=20)
+    dropdown = CTkComboBox(setup_wizard,values=["tiny","base","small","medium","Large-v3"],height=35)
     setup_wizard.mainloop()
 
 def voice_recog():
