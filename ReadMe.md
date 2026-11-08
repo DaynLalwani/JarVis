@@ -26,7 +26,12 @@ IMPORTANT : EMERGENCY STOP -> ESC , will crash the whole program , use if the AI
 * Run main.exe
 * Click the Setup wizard button and follow the instructions
 
+# Running on python
 
+* Clone the Repository by going to the repo -> code -> download zip file
+* Extract the zip file
+
+* Run ```python main.py ```
 # NOTE
 * Each output costs ~ 1000 tokens( 950 input and ~50 out) . make sure you can send at least 5-8 requests (50-80k) tokens , to make sure Jarvis can fulfill your command.
 
