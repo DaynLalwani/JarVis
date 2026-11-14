@@ -78,3 +78,5 @@ https://github.com/user-attachments/assets/084b3fa4-de5d-4ffa-96b3-c1f480ad738d
 https://github.com/user-attachments/assets/56edd2ef-6cc4-419b-8a05-3641b4be0580
 
 
+# NOTICE FOR FRAUD SQUAD
+Hi , i am writing this to emphasize the AI disclosure as it was in a journal and kinda vague ... basically i used claude to re-format the setup() function as it looked very ugly , the one I wrote was before this commit : https://github.com/DaynLalwani/JarVis/commit/da902d4dd9ecf0b43504b6ab1cc855d8ab9808f9 . tyy
